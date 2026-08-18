@@ -11,7 +11,7 @@ async function getCollection() {
 async function saveRound(data) {
   const collection = await getCollection();
   const result = await collection.insertOne(data);
-  return result.insertedId;
+  return result.insertedId.toString();
 }
 
 async function getActiveRoundByPlayerId(playerId) {
