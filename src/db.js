@@ -6,8 +6,8 @@ let client, db;
 async function getDb() {
   try {
     client = new MongoClient(process.env.MONGO_URI);
-    await client.connect(process.env.MONGODB_NAME);
-    db = client.db();
+    await client.connect();
+    db = client.db(process.env.MONGODB_NAME);
   } catch (error) {
     console.error(error.message);
   }

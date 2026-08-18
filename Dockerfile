@@ -8,6 +8,6 @@ RUN npm i
 
 COPY . .
 
-CMD ["node", "--watch", " src/server.js"]
+CMD ["node", "--watch", "src/server.js"]
 
 
