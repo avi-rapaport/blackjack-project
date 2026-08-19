@@ -31,18 +31,18 @@ async function updateRoundStatus(roundId, status) {
   );
 }
 
-async function addCard(roundId, hand, newCard) {
+async function addCardToPlayer(roundId, newCard) {
   const collection = await getCollection();
   await collection.updateOne(
     { _id: new ObjectId(roundId) },
-    { $push: { [hand]: newCard } },
+    { $push: { playerCards: newCard } },
   );
 }
 
-export const roundsRepo = {
+export const roundRepo = {
   getCollection,
   saveRound,
   getActiveRoundByPlayerId,
   updateRoundStatus,
-  addCard,
+  addCardToPlayer,
 };

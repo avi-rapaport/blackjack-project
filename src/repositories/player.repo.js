@@ -14,26 +14,28 @@ async function savePlayr() {
     chips: 1000,
     createdAt: new Date().toISOString(),
   });
-  return result.insertedId.toString();
+  return { playerId: result.insertedId.toString(), chips: 1000 };
 }
 
-async function getPlayerById(id) {
+async function findPlayerById(id) {
   const collection = await getCollection();
   const result = await collection.findOne({ _id: new ObjectId(id) });
   return result;
 }
 
-async function updatePlayerChips(id, bet) {
+async function updatePlayerChips(id, amount) {
   const collection = await getCollection();
-  await collection.updateOne(
+  const result = await collection.findOneAndUpdate(
     { _id: new ObjectId(id) },
-    { $inc: { chips: -bet } },
+    { $inc: { chips: amount } },
+    { returnDocument: "after" },
   );
+  return result.chips;
 }
 
 export const playerRepo = {
   getCollection,
   savePlayr,
-  getPlayerById,
+  findPlayerById,
   updatePlayerChips,
 };
