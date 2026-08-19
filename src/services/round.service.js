@@ -1,51 +1,6 @@
 import { roundRepo } from "../repositories/round.repo.js";
 import { playerRepo } from "../repositories/player.repo.js";
-
-function getRandomCard() {
-  //prettier-ignore
-  const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-  const suits = ["hearts", "diamonds", "clubs", "spades"];
-
-  const randomRank = ranks[Math.floor(Math.random() * ranks.length)];
-  const randomSuit = suits[Math.floor(Math.random() * suits.length)];
-
-  return { rank: randomRank, suit: randomSuit };
-}
-
-function calculateHand(cards) {
-  let total = 0;
-  let aceCount = 0;
-
-  for (const card of cards) {
-    if (card.rank === "A") {
-      aceCount += 1;
-      total += 11;
-    } else if (["J", "Q", "K"].includes(card.rank)) {
-      total += 10;
-    } else {
-      total += Number(card.rank);
-    }
-  }
-
-  while (total > 21 && aceCount > 0) {
-    total -= 10;
-    aceCount--;
-  }
-  return total;
-}
-
-function playDealerTurn(initalDealerCards) {
-  const dealerCards = [...initalDealerCards];
-  let dealerTotal = calculateHand(dealerCards);
-
-  while (dealerTotal < 17) {
-    const newCard = getRandomCard();
-    dealerCards.push(newCard);
-    dealerTotal = calculateHand(dealerCards);
-  }
-
-  return { dealerCards, dealerTotal, isBust: dealerTotal > 21 };
-}
+import { getRandomCard, calculateHand } from "../utils/round.utils.js";
 
 async function handlePayments(playerId, status, bet) {
   if (["player_win", "dealer_bust"].includes(status)) {
@@ -101,13 +56,7 @@ async function startRound(bet, playerId) {
   };
 }
 
-function handlePlayerTurn(playerTotal) {
-  let status = "in_progress";
-  if (playerTotal === 21) {
-  }
-}
-
-async function playPlayerHit(playerId) {
+async function playPlayerTurn(playerId) {
   const activeRound = await roundRepo.getActiveRoundByPlayerId(playerId);
   if (!activeRound) {
     const error = new Error("Player doesn't have round in progress!");
@@ -116,15 +65,15 @@ async function playPlayerHit(playerId) {
   }
 
   const newCard = getRandomCard();
-  await roundRepo.addCardToPlayer(activeRound._id, newCard);
   const updatedCards = [...activeRound.playerCards, newCard];
+  await roundRepo.updateRound(activeRound._id, { playerCards: updatedCards });
   const playerTotal = calculateHand(updatedCards);
 
   let status = "in_progress";
 
   if (playerTotal > 21) {
     status = "player_bust";
-    await roundRepo.updateRoundStatus(activeRound._id, status);
+    await roundRepo.updateRound(activeRound._id, { status });
   }
 
   const player = await playerRepo.findPlayerById(playerId);
@@ -137,6 +86,55 @@ async function playPlayerHit(playerId) {
   };
 }
 
+async function playDealerTurn(playerId) {
+  const activeRound = await roundRepo.getActiveRoundByPlayerId(playerId);
+  if (!activeRound) {
+    const error = new Error("Player doesn't have round in progress!");
+    error.status = 404;
+    throw error;
+  }
+
+  const dealerCards = [...activeRound.dealerCards];
+  let dealerTotal = calculateHand(dealerCards);
+
+  while (dealerTotal < 17) {
+    const newCard = getRandomCard();
+    dealerCards.push(newCard);
+    dealerTotal = calculateHand(dealerCards);
+  }
+
+  const player = await playerRepo.findPlayerById(playerId);
+  let status;
+  let remainingChips = player.chips;
+  const playerTotal = calculateHand(activeRound.playerCards);
+  if (dealerTotal > 21) {
+    status = "dealer_bust";
+  } else {
+    if (playerTotal > dealerTotal) {
+      status = "player_win";
+      remainingChips = await handlePayments(playerId, status, activeRound.bet);
+    } else if (dealerTotal > playerTotal) {
+      status = "dealer_win";
+    } else {
+      status = "push";
+      remainingChips = await handlePayments(playerId, status, activeRound.bet);
+    }
+
+    await roundRepo.updateRound(activeRound._id, { dealerCards, status });
+  }
+
+  return {
+    playerCards: activeRound.playerCards,
+    dealerCards,
+    playerTotal,
+    dealerTotal,
+    status,
+    chips: remainingChips,
+  };
+}
+
 export const roundService = {
   startRound,
+  playPlayerTurn,
+  playDealerTurn,
 };

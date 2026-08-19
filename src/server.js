@@ -2,7 +2,7 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import { router as playerRouter } from "./routes/player.routes.js";
-import { router as roundRouter } from "./routes/round.router.js";
+import { router as roundRouter } from "./routes/round.routes.js";
 import { errorHandler } from "./middleware.js";
 const PORT = process.env.PORT;
 
