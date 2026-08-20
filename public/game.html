@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Blackjack</h1>
+    </header>
+
+    <div id="chips" class="chips"></div>
+
+    <nav class="navbar" id="play">
+      <div id="start-section" class="start-section hidden">
+        <input
+          type="number"
+          id="bet-input"
+          placeholder="Enter bet"
+          class="bet-input"
+        />
+        <button id="start-btn" class="play-btn">Start Round</button>
+      </div>
+
+      <div id="resume-section" class="hidden">
+        <button id="resume-btn" class="play-btn">Resume Round</button>
+      </div>
+    </nav>
+
+    <main class="main">
+      <h2 class="headline">Dealer cards</h2>
+      <div class="cards">
+        <div class="card" id="dealer-card-1"></div>
+        <div class="card" id="dealer-card-2"></div>
+      </div>
+
+      <section id="actions" class="game-section">
+        <button class="action-btn hidden" id="hit">Hit</button>
+        <button class="action-btn hidden" id="stand">Stand</button>
+      </section>
+
+      <div class="cards">
+        <div class="card" id="player-card-1"></div>
+        <div class="card" id="player-card-2"></div>
+      </div>
+      <h2 class="headline">Player cards</h2>
+      <h3 id="total"></h3>
+    </main>
+  </body>
+</html>

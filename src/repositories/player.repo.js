@@ -8,13 +8,13 @@ async function getCollection() {
   return collection;
 }
 
-async function savePlayr() {
+async function savePlayer() {
   const collection = await getCollection();
   const result = await collection.insertOne({
     chips: 1000,
     createdAt: new Date().toISOString(),
   });
-  return { playerId: result.insertedId.toString(), chips: 1000 };
+  return result.insertedId.toString();
 }
 
 async function findPlayerById(id) {
@@ -35,7 +35,7 @@ async function updatePlayerChips(id, amount) {
 
 export const playerRepo = {
   getCollection,
-  savePlayr,
+  savePlayer,
   findPlayerById,
   updatePlayerChips,
 };

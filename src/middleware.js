@@ -12,6 +12,7 @@ export async function identifyPlayer(req, res, next) {
 }
 
 export function errorHandler(err, req, res, next) {
+  console.log(err);
   const status = err.status || 500;
   const message = err.status ? err.message : "Internal server error";
   const jsonResponse = { success: false, message: message };

@@ -1,6 +1,9 @@
 import { roundRepo } from "../repositories/round.repo.js";
 import { playerRepo } from "../repositories/player.repo.js";
-import { getRandomCard, calculateHand } from "../utils/round.utils.js";
+import {
+  getRandomCard,
+  calculateHand,
+} from "../../public/utils/round.utils.js";
 
 async function handlePayments(playerId, status, bet) {
   if (["player_win", "dealer_bust"].includes(status)) {
@@ -48,6 +51,7 @@ async function startRound(bet, playerId) {
   };
 
   const roundId = await roundRepo.saveRound(newRound);
+
   return {
     roundId,
     playerCards,
@@ -66,15 +70,17 @@ async function playPlayerTurn(playerId) {
 
   const newCard = getRandomCard();
   const updatedCards = [...activeRound.playerCards, newCard];
-  await roundRepo.updateRound(activeRound._id, { playerCards: updatedCards });
   const playerTotal = calculateHand(updatedCards);
 
   let status = "in_progress";
-
   if (playerTotal > 21) {
     status = "player_bust";
-    await roundRepo.updateRound(activeRound._id, { status });
   }
+
+  await roundRepo.updateRound(activeRound._id, {
+    status,
+    playerCards: updatedCards,
+  });
 
   const player = await playerRepo.findPlayerById(playerId);
 
@@ -107,19 +113,19 @@ async function playDealerTurn(playerId) {
   let status;
   let remainingChips = player.chips;
   const playerTotal = calculateHand(activeRound.playerCards);
+
   if (dealerTotal > 21) {
     status = "dealer_bust";
   } else {
     if (playerTotal > dealerTotal) {
       status = "player_win";
-      remainingChips = await handlePayments(playerId, status, activeRound.bet);
     } else if (dealerTotal > playerTotal) {
       status = "dealer_win";
     } else {
       status = "push";
-      remainingChips = await handlePayments(playerId, status, activeRound.bet);
     }
 
+    remainingChips = await handlePayments(playerId, status, activeRound.bet);
     await roundRepo.updateRound(activeRound._id, { dealerCards, status });
   }
 

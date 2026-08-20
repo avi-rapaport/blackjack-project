@@ -4,12 +4,18 @@ import cors from "cors";
 import { router as playerRouter } from "./routes/player.routes.js";
 import { router as roundRouter } from "./routes/round.routes.js";
 import { errorHandler } from "./middleware.js";
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 const server = express();
 server.use(express.json());
 server.use(cors());
+server.use(express.urlencoded({ extended: true }));
+server.use(express.static(process.cwd() + "/public"));
+server.use(express.static(process.cwd() + "/utils"));
 
+server.get("/", (req, res) => {
+  res.sendFile(process.cwd() + "/public/game.html");
+});
 server.use("/", playerRouter);
 server.use("/", roundRouter);
 
