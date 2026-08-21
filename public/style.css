@@ -60,7 +60,7 @@ body {
 
 .card {
   width: 11rem;
-  height: 20rem;
+  height: 18rem;
   background-color: blanchedalmond;
   border: 6px solid white;
   font-size: 3rem;
@@ -92,4 +92,46 @@ body {
 
 .hidden {
   display: none !important;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin: 12px auto;
+  max-width: 300px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.game-message {
+  padding: 1rem 2rem;
+  margin: 1rem auto;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  max-width: 400px;
+}
+
+.game-message.win {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 2px solid #34d399;
+}
+
+.game-message.lose {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #f87171;
+}
+
+.game-message.push {
+  background-color: #e0f2fe;
+  color: #075985;
+  border: 2px solid #38bdf8;
 }

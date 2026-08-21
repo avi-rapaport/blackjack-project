@@ -30,19 +30,23 @@
       </div>
     </nav>
 
+    <div id="error-message" class="error-message hidden"></div>
+
     <main class="main">
+      <div id="game-message" class="game-message hidden"></div>
+
       <h2 class="headline">Dealer cards</h2>
-      <div class="cards">
+      <div id="dealer-cards" class="cards">
         <div class="card" id="dealer-card-1"></div>
         <div class="card" id="dealer-card-2"></div>
       </div>
 
-      <section id="actions" class="game-section">
-        <button class="action-btn hidden" id="hit">Hit</button>
-        <button class="action-btn hidden" id="stand">Stand</button>
+      <section id="actions" class="game-section hidden">
+        <button class="action-btn" id="hit">Hit</button>
+        <button class="action-btn" id="stand">Stand</button>
       </section>
 
-      <div class="cards">
+      <div id="player-cards" class="cards">
         <div class="card" id="player-card-1"></div>
         <div class="card" id="player-card-2"></div>
       </div>

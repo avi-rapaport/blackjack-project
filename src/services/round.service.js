@@ -88,7 +88,7 @@ async function playPlayerTurn(playerId) {
     playerCards: updatedCards,
     playerTotal,
     status,
-    chips: player.chips,
+    remainingChips: player.chips,
   };
 }
 
